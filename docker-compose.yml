@@ -120,9 +120,8 @@ services:
     labels:
      - "traefik.docker.network=frontend"
      - "traefik.enable=true"
-     - "traefik.frontend.rule=Host:${JIRA_DOMAINS}"
+     - "traefik.frontend.rule=Host:${CONFLUENCE_DOMAINS}"
      - "traefik.port=8090"
-     - "traefik.port=8091"
      - "traefik.protocol=http"
       # Uncomment the following line to enable HSTS header.
       #- "traefik.frontend.headers.STSSeconds=15768000"
