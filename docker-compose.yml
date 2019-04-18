@@ -75,7 +75,7 @@ services:
     volumes:
       - jiradata:/var/atlassian/jira
     ports:
-      - '80:8080'
+      - '8080:8080'
     environment:
       JIRA_DATABASE_URL: ${JIRA_DATABASE_URL} 
       JIRA_DB_PASSWORD: ${POSTGRES_PASSWORD}
@@ -94,7 +94,7 @@ services:
      - "traefik.docker.network=frontend"
      - "traefik.enable=true"
      - "traefik.frontend.rule=Host:${JIRA_DOMAINS}"
-     - "traefik.port=80"
+     - "traefik.port=8080"
      - "traefik.protocol=http"
       # Uncomment the following line to enable HSTS header.
       #- "traefik.frontend.headers.STSSeconds=15768000"
@@ -109,7 +109,7 @@ services:
     volumes:
       - confluencedata:/var/atlassian/confluence
     ports:
-      - '80:8090'
+      - '8090:8090'
       - '8091:8091'
     environment:
       - 'CATALINA_OPTS= -Xms256m -Xmx1g'
@@ -121,7 +121,8 @@ services:
      - "traefik.docker.network=frontend"
      - "traefik.enable=true"
      - "traefik.frontend.rule=Host:${JIRA_DOMAINS}"
-     - "traefik.port=80"
+     - "traefik.port=8090"
+     - "traefik.port=8091"
      - "traefik.protocol=http"
       # Uncomment the following line to enable HSTS header.
       #- "traefik.frontend.headers.STSSeconds=15768000"
