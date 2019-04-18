@@ -130,12 +130,17 @@ services:
     image: postgres:9.5-alpine
     networks:
       - backend
+    ports:
+      - 5432:5432
     volumes:
-      - postgresqldata:/var/lib/postgresql/data
+      - postgresqldata:/var/lib/postgresql/data/pg_data
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: ${POSTGRES.DOMAINS}
+      POSTGRES_PORT: ${POSTGRES.PORT}
+      PGDATA: /var/lib/postgresql/data/pg_data
       POSTGRES_ENCODING: ${POSTGRES_ENCODING}
       POSTGRES_COLLATE: ${POSTGRES_COLLATE}
       POSTGRES_COLLATE_TYPE: ${POSTGRES_COLLATE_TYPE}
