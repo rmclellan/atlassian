@@ -20,6 +20,7 @@ apt-get install -y unattended-upgrades
 # Retrieve configuration files. Lots of explanatory comments inside!
 # If you'd rather inspect and install these files yourself, see:
 # https://docs.bytemark.co.uk/article/wordpress-on-docker-with-phpmyadmin-ssl-via-traefik-and-automatic-updates/#look-a-bit-deeper
+rm -rf /root/compose
 mkdir -p /root/compose
 curl -fsSL https://raw.githubusercontent.com/rmclellan/atlassian/master/docker-compose.yml -o /root/compose/docker-compose.yml
 curl -fsSL https://raw.githubusercontent.com/rmclellan/atlassian/master/.env -o /root/compose/.env
@@ -30,8 +31,8 @@ touch /root/compose/acme.json
 chmod 0600 /root/compose/acme.json
 
 # Use the hostname of the server as the main domain.
-sed -i -e "s|^TRAEFIK_DOMAINS=.*|TRAEFIK_DOMAINS=`hostname -f`|" /root/compose/.env
-sed -i -e "s|^JIRA_DOMAINS=.*|JIRA_DOMAINS=`hostname -f`|" /root/compose/.env
+# sed -i -e "s|^TRAEFIK_DOMAINS=.*|TRAEFIK_DOMAINS=`hostname -f`|" /root/compose/.env
+# sed -i -e "s|^JIRA_DOMAINS=.*|JIRA_DOMAINS=`hostname -f`|" /root/compose/.env
 
 # Fill /root/compose/.env with some randomly generated passwords.
 sed -i -e "s|^POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=`cat /dev/urandom | tr -dc '[:alnum:]' | head -c14`|" /root/compose/.env
