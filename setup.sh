@@ -36,6 +36,7 @@ chmod 0600 /root/compose/acme.json
 
 # Fill /root/compose/.env with some randomly generated passwords.
 sed -i -e "s|^POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=`cat /dev/urandom | tr -dc '[:alnum:]' | head -c14`|" /root/compose/.env
+sed -i -e "s|^PGPASSWORD=.*|PGPASSWORD=`cat /dev/urandom | tr -dc '[:alnum:]' | head -c14`|" /root/compose/.env
 apt-get install -y apache2-utils
 BASIC_AUTH_PASSWORD="`cat /dev/urandom | tr -dc '[:alnum:]' | head -c10`"
 BASIC_AUTH="`printf '%s\n' "$BASIC_AUTH_PASSWORD" | tee /root/compose/auth-password.txt | htpasswd -in admin`"
