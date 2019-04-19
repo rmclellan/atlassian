@@ -15,11 +15,8 @@ networks:
 # We don't want our data to be lost when restarting containers.
 volumes:
   jiradata:
-    external: false
   postgresqldata:
-    external: false
   confluencedata:
-    external: false
 
 # Create our containers.
 services:
@@ -133,17 +130,14 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - postgresqldata:/var/lib/postgresql/data/pg_data
+      - postgresqldata:/var/lib/postgresql/data
     environment:
+      PGPASSWORD: ${PGPASSWORD}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_HOST: ${POSTGRES_DOMAINS}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      PGDATA: /var/lib/postgresql/data/pg_data
-      POSTGRES_ENCODING: ${POSTGRES_ENCODING}
-      POSTGRES_COLLATE: ${POSTGRES_COLLATE}
-      POSTGRES_COLLATE_TYPE: ${POSTGRES_COLLATE_TYPE}
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_INITDB_ARGS: --encoding=UNICODE --locale=C
     logging:
       # limit logs retained on host to 25MB
       driver: "json-file"
