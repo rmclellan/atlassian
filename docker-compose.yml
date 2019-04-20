@@ -1,4 +1,4 @@
-version: '3'
+version: '3.1'
 # See https://docs.docker.com/compose/overview/ for more information.
 
 # If you make changes to this file or any related files, apply them by
@@ -17,6 +17,7 @@ volumes:
   jiradata:
   postgresqldata:
   confluencedata:
+    driver: local
 
 # Create our containers.
 services:
@@ -121,28 +122,29 @@ services:
       #- "traefik.frontend.headers.STSSeconds=15768000"
       
   postgresql:
-    image: postgres:9.5-alpine
-    networks:
-      - backend
-    ports:
-      - 5432:5432
-    volumes:
-      - postgresqldata:/var/lib/postgresql/data
-    environment:
-      - PGPASSWORD: changeme
-      - POSTGRES_USER: jira
-      - POSTGRES_PASSWORD: changeme
-      - POSTGRES_DB: jiradb
-      - PGDATA: /var/lib/postgresql/data/pgdata
-      - POSTGRES_INITDB_ARGS: --encoding=UNICODE --locale=C
-    logging:
-      # limit logs retained on host to 25MB
-      driver: "json-file"
-      options:
-        max-size: "500k"
-        max-file: "50"
-    labels:
-      - "traefik.enable=false"
+   image: postgres:9.6-alpine
+   networks:
+    - backend
+   ports:
+    - 5432:5432
+   volumes:
+    - postgresqldata:/var/lib/postgresql/data
+   environment:
+    POSTGRES_PASSWORD: 'mypassword'
+    POSTGRES_USER: 'jira'
+    POSTGRES_PASSWORD: 'changeme'
+    POSTGRES_DB: 'jiradb'
+    PGDATA: /var/lib/postgresql/data/pgdata
+    POSTGRES_INITDB_ARGS: --encoding=UNICODE --locale=C
+   logging:
+     # limit logs retained on host to 25MB
+     driver: "json-file"
+     options:
+      max-size: "500k"
+      max-file: "50"
+   labels:
+    - "traefik.enable=false"
+
   mail:
     image: bytemark/smtp
     restart: always
