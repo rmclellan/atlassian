@@ -185,12 +185,14 @@ services:
     labels:
       - "traefik.enable=false"
 
-  smf:
-   container_name: mail-forwarder
-   image: zixia/simple-mail-forwarder
-   ports:
-    - "25:25"
-   environment:
-    - SMF_CONFIG=@millhousestrata.ca:robert@mclellan.co
-   labels:
-    - "traefik.enable=false"
+ # smf:
+ #  container_name: mail-forwarder
+ #  image: zixia/simple-mail-forwarder
+ #  ports:
+ #   - "25:25"
+ #  networks:
+ #   - frontend
+ #  environment:
+ #   - SMF_CONFIG=@millhousestrata.ca:robert@mclellan.co
+ # labels:
+ #  - "traefik.enable=false"
