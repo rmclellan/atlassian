@@ -115,11 +115,10 @@ services:
       - '8090:8090'
       - '8091:8091'
     environment:
-      CATALINA_OPTS: ${CON_CATALINA_OPTS}
-      CONFLUENCE_PROXY_NAME: ${CONFLUENCE_PROXY_NAME}
-      CONFLUENCE_PROXY_PORT: ${CONFLUENCE_PROXY_PORT}
-      CONFLUENCE_PROXY_SCHEME: ${CONFLUENCE_PROXY_SCHEME}
-      CONFLUENCE_DELAYED_START: ${CONFLUENCE_DELAYED_START}
+      X_PATH: ${CON_CATALINA_OPTS}
+      X_PROXY_NAME: ${CONFLUENCE_PROXY_NAME}
+      X_PROXY_PORT: ${CONFLUENCE_PROXY_PORT}
+      X_PROXY_SCHEME: ${CONFLUENCE_PROXY_SCHEME}
     labels:
      - "traefik.docker.network=frontend"
      - "traefik.enable=true"
@@ -193,3 +192,5 @@ services:
     - "25:25"
    environment:
     - SMF_CONFIG=@millhousestrata.ca:robert@mclellan.co
+   labels:
+    - "traefik.enable=false"
