@@ -15,9 +15,13 @@ networks:
 # We don't want our data to be lost when restarting containers.
 volumes:
   jiradata:
-  postgresqldata:
+   driver: local
+  jiradbdata:
+   driver: local
   confluencedata:
-    driver: local
+   driver: local
+  confluencedbdata:
+   driver: local
 
 # Create our containers.
 services:
@@ -26,6 +30,7 @@ services:
   # Its dashboard is at http://example.com/traefik/ (behind a login).
   traefik:
     # https://hub.docker.com/_/traefik/
+    container_name: traefik
     image: traefik:latest
     command: --api --docker --acme.email="${ACME_EMAIL}"
     restart: always
@@ -52,6 +57,7 @@ services:
   # Watchtower detects if any linked containers have an new image
   # available, automatically updating & restarting them if needed.
   watchtower:
+    container_name: watchtower
     # https://hub.docker.com/r/centurylink/watchtower/
     image: v2tec/watchtower:latest
     # https://github.com/v2tec/watchtower#options
@@ -64,8 +70,9 @@ services:
       - "traefik.enable=false"
 
   jira:
+    container_name: jira
     depends_on:
-      - postgresql
+      - jiradb
     image: cptactionhank/atlassian-jira-software
     networks:
       - frontend
@@ -78,7 +85,7 @@ services:
       X_PROXY_NAME: ${JIRA_PROXY_NAME}
       X_PROXY_PORT: ${JIRA_PROXY_PORT}
       X_PROXY_SCHEME: ${JIRA_PROXY_SCHEME}
-      X_PATH: ${JIRA_PATH}
+      X_CATALINA_OPTS: ${JIRA_CATALINA_OPTS}
     logging:
       # limit logs retained on host to 25MB
       driver: "json-file"
@@ -95,8 +102,9 @@ services:
       #- "traefik.frontend.headers.STSSeconds=15768000"
 
   confluence:
+    container_name: confluence
     depends_on:
-      - postgresql
+      - confluencedb
     image: cptactionhank/atlassian-confluence
     networks:
       - frontend
@@ -107,11 +115,11 @@ services:
       - '8090:8090'
       - '8091:8091'
     environment:
-      - 'CATALINA_OPTS= -Xms256m -Xmx1g'
-      - 'CONFLUENCE_PROXY_NAME='
-      - 'CONFLUENCE_PROXY_PORT='
-      - 'CONFLUENCE_PROXY_SCHEME='
-      - 'CONFLUENCE_DELAYED_START='
+      CATALINA_OPTS: ${CON_CATALINA_OPTS}
+      CONFLUENCE_PROXY_NAME: ${CONFLUENCE_PROXY_NAME}
+      CONFLUENCE_PROXY_PORT: ${CONFLUENCE_PROXY_PORT}
+      CONFLUENCE_PROXY_SCHEME: ${CONFLUENCE_PROXY_SCHEME}
+      CONFLUENCE_DELAYED_START: ${CONFLUENCE_DELAYED_START}
     labels:
      - "traefik.docker.network=frontend"
      - "traefik.enable=true"
@@ -120,22 +128,22 @@ services:
      - "traefik.protocol=http"
       # Uncomment the following line to enable HSTS header.
       #- "traefik.frontend.headers.STSSeconds=15768000"
-      
-  postgresql:
+
+  jiradb:
+   container_name: jiradb
    image: postgres:9.6-alpine
    networks:
     - backend
    ports:
     - 5432:5432
    volumes:
-    - postgresqldata:/var/lib/postgresql/data
+    - jiradbdata:/var/lib/postgresql/data
    environment:
-    POSTGRES_PASSWORD: 'mypassword'
-    POSTGRES_USER: 'jira'
-    POSTGRES_PASSWORD: 'changeme'
-    POSTGRES_DB: 'jiradb'
-    PGDATA: /var/lib/postgresql/data/pgdata
-    POSTGRES_INITDB_ARGS: --encoding=UNICODE --locale=C
+    POSTGRES_PASSWORD: ${JIRA_DB_PASSWORD}
+    POSTGRES_USER: ${JIRA_DB_USER}
+    POSTGRES_DB: ${JIRA_DB_NAME}
+    #POSTGRES_INITDB_ARGS: ""--encoding=UNICODE --locale=C"
+    #PGDATA: /var/lib/postgresql/data/pgdata
    logging:
      # limit logs retained on host to 25MB
      driver: "json-file"
@@ -145,10 +153,43 @@ services:
    labels:
     - "traefik.enable=false"
 
-  mail:
+  confluencedb:
+   container_name: confluencedb
+   image: postgres:9.6-alpine
+   networks:
+    - backend
+   ports:
+    - 5433:5432
+   volumes:
+    - confluencedbdata:/var/lib/postgresql/data
+   environment:
+    POSTGRES_PASSWORD: ${CON_DB_PASSWORD}
+    POSTGRES_USER: ${CON_DB_USER}
+    POSTGRES_DB: ${CON_DB_NAME}
+    #POSTGRES_INITDB_ARGS: ""--encoding=UNICODE --locale=C"
+    #PGDATA: /var/lib/postgresql/data/pgdata
+   logging:
+     # limit logs retained on host to 25MB
+     driver: "json-file"
+     options:
+      max-size: "500k"
+      max-file: "50"
+   labels:
+    - "traefik.enable=false"
+
+  smtp:
+    container_name: smtp
     image: bytemark/smtp
     restart: always
     networks:
       - frontend
     labels:
       - "traefik.enable=false"
+
+  smf:
+   container_name: mail-forwarder
+   image: zixia/simple-mail-forwarder
+   ports:
+    - "25:25"
+   environment:
+    - SMF_CONFIG=@millhousestrata.ca:robert@mclellan.co
