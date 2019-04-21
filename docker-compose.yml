@@ -175,24 +175,3 @@ services:
       max-file: "50"
    labels:
     - "traefik.enable=false"
-
-  smtp:
-    container_name: smtp
-    image: bytemark/smtp
-    restart: always
-    networks:
-      - frontend
-    labels:
-      - "traefik.enable=false"
-
- # smf:
- #  container_name: mail-forwarder
- #  image: zixia/simple-mail-forwarder
- #  ports:
- #   - "25:25"
- #  networks:
- #   - frontend
- #  environment:
- #   - SMF_CONFIG=@millhousestrata.ca:robert@mclellan.co
- # labels:
- #  - "traefik.enable=false"
