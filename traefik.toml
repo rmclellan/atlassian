@@ -20,8 +20,8 @@ defaultEntryPoints = ["https", "http"]
   [entryPoints.https]
   address = ":443"
     [entryPoints.https.tls]
-  [entryPoints.confluence]
-  address = ":8091"
+  #[entryPoints.confluence]
+  #address = ":8091"
 
 # These options are for Traefik's integration with Docker.
 [docker]
@@ -34,7 +34,6 @@ exposedByDefault = false
 # Your certificates are stored inside /acme.json inside the container,
 # which is /root/compose/acme.json on your server.
 [acme]
-email = "robert+letsencrypt.com@mclellan.co" #any email id will work
 acmeLogging=true 
 storage = "acme.json"
 onHostRule = true
