@@ -45,6 +45,9 @@ services:
       # Map port 80 and 443 on the host to this container.
       - "80:80"
       - "443:443"
+    environment:
+      - CF_API_EMAIL=${CLOUDFLARE_EMAIL}
+      - CF_API_KEY=${CLOUDFLARE_API_KEY}
     labels:
       - "traefik.docker.network=frontend"
       - "traefik.enable=true"
