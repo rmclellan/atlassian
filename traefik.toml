@@ -1,5 +1,4 @@
 #debug = true
-
 logLevel = "ERROR" #DEBUG, INFO, WARN, ERROR, FATAL, PANIC
 #InsecureSkipVerify = true 
 defaultEntryPoints = ["https", "http"]
@@ -18,6 +17,7 @@ defaultEntryPoints = ["https", "http"]
   # Uncomment the following two lines to redirect HTTP to HTTPS.
   #  [entryPoints.http.redirect]
   #  entryPoint = "https"
+  [entryPoints.https]
   address = ":443"
     [entryPoints.https.tls]
   [entryPoints.confluence]
@@ -39,7 +39,7 @@ acmeLogging=true
 storage = "acme.json"
 onHostRule = true
 entryPoint = "https"
-[acme.dnsChallenge]
+  [acme.dnsChallenge]
   provider = "cloudflare"
   delayBeforeCheck = 300
 #  [acme.httpChallenge]
