@@ -1,5 +1,14 @@
-# Traefik will listen for traffic on both HTTP and HTTPS.
-defaultEntryPoints = ["http", "https"]
+#debug = true
+
+logLevel = "ERROR" #DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+#InsecureSkipVerify = true 
+defaultEntryPoints = ["https", "http"]
+
+# WEB interface of Traefik - it will show web page with overview of frontend and backend configurations 
+[api]
+  entryPoint = "traefik"
+  dashboard = true
+  address = ":9090"
 
 # Network traffic will be entering our Docker network on the usual web ports
 # (ie, 80 and 443), where Traefik will be listening.
@@ -9,7 +18,6 @@ defaultEntryPoints = ["http", "https"]
   # Uncomment the following two lines to redirect HTTP to HTTPS.
   #  [entryPoints.http.redirect]
   #  entryPoint = "https"
-  [entryPoints.https]
   address = ":443"
     [entryPoints.https.tls]
   [entryPoints.confluence]
@@ -26,18 +34,16 @@ exposedByDefault = false
 # Your certificates are stored inside /acme.json inside the container,
 # which is /root/compose/acme.json on your server.
 [acme]
+email = "robert+letsencrypt.com@mclellan.co" #any email id will work
+acmeLogging=true 
 storage = "acme.json"
 onHostRule = true
-caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
 entryPoint = "https"
+[acme.dnsChallenge]
+  provider = "cloudflare"
+  delayBeforeCheck = 300
 #  [acme.httpChallenge]
 #  entryPoint = "http"
-  [acme.dnsChallenge]
-  provider = "cloudflare"
-  CF_API_EMAIL= =""
-  CF_API_KEY= ""
-  delayBeforeCheck = 0
-
 [[acme.domains]]
   main = "millhousestrata.ca"
   sans = ["jira.millhousestrata.ca", "wiki.millhousestrata.ca"]
