@@ -12,6 +12,8 @@ defaultEntryPoints = ["http", "https"]
   [entryPoints.https]
   address = ":443"
     [entryPoints.https.tls]
+  [entryPoints.confluence]
+  address = ":8091"
 
 # These options are for Traefik's integration with Docker.
 [docker]
@@ -26,9 +28,19 @@ exposedByDefault = false
 [acme]
 storage = "acme.json"
 onHostRule = true
+caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
 entryPoint = "https"
-  [acme.httpChallenge]
-  entryPoint = "http"
+#  [acme.httpChallenge]
+#  entryPoint = "http"
+  [acme.dnsChallenge]
+  provider = "cloudflare"
+  CF_API_EMAIL= =""
+  CF_API_KEY= ""
+  delayBeforeCheck = 0
+
+[[acme.domains]]
+  main = "millhousestrata.ca"
+  sans = ["jira.millhousestrata.ca", "wiki.millhousestrata.ca"]
 
 # https://docs.traefik.io/configuration/logs/
 # Comment out the next line to enable Traefik's access logs.
